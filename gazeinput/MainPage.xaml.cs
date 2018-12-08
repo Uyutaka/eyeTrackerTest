@@ -30,12 +30,12 @@ using Windows.Foundation;
 using System.Collections.Generic;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
+using Windows.UI.Popups;
 namespace gazeinput
 {
     public sealed partial class MainPage : Page
     {
-        const int MAX_TRIAL = 5;
+        const int MAX_TRIAL = 2;
         /// <summary>
         /// Reference to the user's eyes and head as detected
         /// by the eye-tracking device.
@@ -68,8 +68,9 @@ namespace gazeinput
 
         /// <For recoding>
         private int numHit = 0;
-
-
+        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        private double[] intervalArr = new double[MAX_TRIAL];
+        
         /// <summary>
         /// Initialize the app.
         /// </summary>
@@ -111,12 +112,29 @@ namespace gazeinput
             // If progress bar reaches maximum value, reset and relocate.
             if (GazeRadialProgressBar.Value == 100)
             {
-                numHit++;
                 if (numHit < MAX_TRIAL)
                 {
+                    manageStopWatch();
                     SetGazeTargetLocation();
+                    numHit++;
+                }
+                else {
+                    sw.Stop();
+                    showResult();
                 }
             }
+        }
+        private void manageStopWatch()
+        {
+            sw.Stop();
+            intervalArr[numHit] = sw.Elapsed.TotalMilliseconds;
+            sw.Reset();
+        }
+        private async void showResult()
+        {
+            //eyeGazePositionEllipse.Visibility = Visibility.Collapsed;
+            var messageDialog = new MessageDialog(intervalArr[0].ToString());
+            await messageDialog.ShowAsync();
         }
 
         /// <summary>
@@ -153,6 +171,7 @@ namespace gazeinput
             // Show progress bar.
             GazeRadialProgressBar.Visibility = Visibility.Visible;
             GazeRadialProgressBar.Value = 0;
+            sw.Start();
         }
 
         /// <summary>
