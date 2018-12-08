@@ -67,10 +67,12 @@ namespace gazeinput
         bool timerStarted = false;
 
         /// <For recoding>
-        private int numHit = 0;
+        private int numTrial = 0;
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         private double[] intervalArr = new double[MAX_TRIAL];
-        
+        int[,] targetPositionArr = new int[MAX_TRIAL, 2];
+
+
         /// <summary>
         /// Initialize the app.
         /// </summary>
@@ -112,25 +114,25 @@ namespace gazeinput
             // If progress bar reaches maximum value, reset and relocate.
             if (GazeRadialProgressBar.Value == 100)
             {
-                if (numHit < MAX_TRIAL)
+                if (numTrial < MAX_TRIAL)
                 {
                     manageStopWatch();
                     SetGazeTargetLocation();
-                    numHit++;
+                    numTrial++;
                 }
                 else {
                     sw.Stop();
-                    showResult();
+                    showDialog();
                 }
             }
         }
         private void manageStopWatch()
         {
             sw.Stop();
-            intervalArr[numHit] = sw.Elapsed.TotalMilliseconds;
+            intervalArr[numTrial] = sw.Elapsed.TotalMilliseconds;
             sw.Reset();
         }
-        private async void showResult()
+        private async void showDialog()
         {
             //eyeGazePositionEllipse.Visibility = Visibility.Collapsed;
             var messageDialog = new MessageDialog(intervalArr[0].ToString());
@@ -162,6 +164,8 @@ namespace gazeinput
                 random.Next(
                     0, 
                     (int)appBounds.Height - (int)GazeRadialProgressBar.Height - (int)Header.ActualHeight);
+            targetPositionArr[numTrial, 0] = randomX;
+            targetPositionArr[numTrial, 1] = randomY;
 
             translateTarget.X = randomX;
             translateTarget.Y = randomY;
