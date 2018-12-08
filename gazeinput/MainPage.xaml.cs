@@ -35,6 +35,7 @@ namespace gazeinput
 {
     public sealed partial class MainPage : Page
     {
+        const int MAX_TRIAL = 5;
         /// <summary>
         /// Reference to the user's eyes and head as detected
         /// by the eye-tracking device.
@@ -64,6 +65,10 @@ namespace gazeinput
         /// Tracker used to prevent gaze timer restarts.
         /// </summary>
         bool timerStarted = false;
+
+        /// <For recoding>
+        private int numHit = 0;
+
 
         /// <summary>
         /// Initialize the app.
@@ -106,7 +111,11 @@ namespace gazeinput
             // If progress bar reaches maximum value, reset and relocate.
             if (GazeRadialProgressBar.Value == 100)
             {
-                SetGazeTargetLocation();
+                numHit++;
+                if (numHit < MAX_TRIAL)
+                {
+                    SetGazeTargetLocation();
+                }
             }
         }
 
