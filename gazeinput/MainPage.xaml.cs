@@ -43,8 +43,11 @@ namespace gazeinput
         Width
         Height
         */
+        // TODO store num of enter/exit
         
-        const int MAX_TRIAL = 2;
+        private const int MAX_TRIAL = 5;
+        private int[] targetSizeArr = new int[] {500,400,300,200,100};
+
         /// <summary>
         /// Reference to the user's eyes and head as detected
         /// by the eye-tracking device.
@@ -77,9 +80,10 @@ namespace gazeinput
 
         /// <For recoding>
         private int numTrial = 0;
-        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        private System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         private double[] intervalArr = new double[MAX_TRIAL];
-        int[,] targetPositionArr = new int[MAX_TRIAL, 2];
+        private int[,] targetPositionArr = new int[MAX_TRIAL, 2];
+        
 
 
         /// <summary>
@@ -165,6 +169,10 @@ namespace gazeinput
         /// </summary>
         private void SetGazeTargetLocation()
         {
+            // Setup target size
+            GazeRadialProgressBar.Width = targetSizeArr[numTrial];
+            GazeRadialProgressBar.Height = targetSizeArr[numTrial];
+
             // Ensure the gaze timer restarts on new progress bar location.
             timerGaze.Stop();
             timerStarted = false;
