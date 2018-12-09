@@ -32,6 +32,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Popups;
 using System.IO;
+using System.Diagnostics;
 namespace gazeinput
 {
     public sealed partial class MainPage : Page
@@ -44,9 +45,8 @@ namespace gazeinput
         Height
         */
         // TODO store num of enter/exit
-        
-        private const int MAX_TRIAL = 5;
-        private int[] targetSizeArr = new int[] {500,400,300,200,100};
+
+        private const int MAX_TRIAL = 10;
 
         /// <summary>
         /// Reference to the user's eyes and head as detected
@@ -83,7 +83,8 @@ namespace gazeinput
         private System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         private double[] intervalArr = new double[MAX_TRIAL];
         private int[,] targetPositionArr = new int[MAX_TRIAL, 2];
-        
+        private int[] targetSizeArr = new int[] { 500, 500, 400, 400, 300, 300, 200, 200, 100, 100 };
+
 
 
         /// <summary>
@@ -130,6 +131,7 @@ namespace gazeinput
                 if (numTrial < MAX_TRIAL)
                 {
                     ManageStopWatch();
+                    ShowTrialResult();
                     SetGazeTargetLocation();
                     numTrial++;
                 }
@@ -139,7 +141,20 @@ namespace gazeinput
                 }
             }
         }
+        private void ShowTrialResult() {
 
+
+            string result = "";
+
+            result += "Target\n";
+            result += numTrial.ToString() + "\tsize: " + targetSizeArr[numTrial];
+            result += "\t(X,Y) = (" + targetPositionArr[numTrial, 0].ToString() + ", " + targetPositionArr[numTrial, 1].ToString() + ")\n";
+
+            result += "interval\n";
+            result += "\t" + intervalArr[numTrial].ToString() + " sec\n";
+            Debug.WriteLine(result);
+
+        }
         private void ManageStopWatch()
         {
             sw.Stop();
@@ -150,9 +165,9 @@ namespace gazeinput
         private async void ShowDialog()
         {
             string result = "";
-            result += "Position\n";
+            result += "Target\n";
             for (int i = 0; i < MAX_TRIAL; i++) {
-                result += i.ToString();
+                result += i.ToString() + "\tsize: " + targetSizeArr[i] + "\n";
                 result += "\t(X,Y) = (" + targetPositionArr[i, 0].ToString() + ", " + targetPositionArr[i,1].ToString() + ")\n";
             }
             result += "interval\n";
