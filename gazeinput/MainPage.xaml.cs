@@ -31,10 +31,19 @@ using System.Collections.Generic;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Popups;
+using System.IO;
 namespace gazeinput
 {
     public sealed partial class MainPage : Page
     {
+        /*
+        // My Memo
+        eyeGazePositionEllipse is user's gaze point
+        GazeRadialProgressBar is bar
+        Width
+        Height
+        */
+        
         const int MAX_TRIAL = 2;
         /// <summary>
         /// Reference to the user's eyes and head as detected
@@ -116,26 +125,38 @@ namespace gazeinput
             {
                 if (numTrial < MAX_TRIAL)
                 {
-                    manageStopWatch();
+                    ManageStopWatch();
                     SetGazeTargetLocation();
                     numTrial++;
                 }
                 else {
                     sw.Stop();
-                    showDialog();
+                    ShowDialog();
                 }
             }
         }
-        private void manageStopWatch()
+
+        private void ManageStopWatch()
         {
             sw.Stop();
-            intervalArr[numTrial] = sw.Elapsed.TotalMilliseconds;
+            intervalArr[numTrial] = sw.Elapsed.TotalSeconds;
             sw.Reset();
         }
-        private async void showDialog()
+
+        private async void ShowDialog()
         {
-            //eyeGazePositionEllipse.Visibility = Visibility.Collapsed;
-            var messageDialog = new MessageDialog(intervalArr[0].ToString());
+            string result = "";
+            result += "Position\n";
+            for (int i = 0; i < MAX_TRIAL; i++) {
+                result += i.ToString();
+                result += "\t(X,Y) = (" + targetPositionArr[i, 0].ToString() + ", " + targetPositionArr[i,1].ToString() + ")\n";
+            }
+            result += "interval\n";
+            for (int i = 0; i < MAX_TRIAL; i++) {
+                result += i.ToString();
+                result += "\t" + intervalArr[i].ToString() + " sec\n";
+            }
+            var messageDialog = new MessageDialog(result);
             await messageDialog.ShowAsync();
         }
 
